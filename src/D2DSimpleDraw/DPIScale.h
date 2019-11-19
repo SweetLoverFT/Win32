@@ -12,9 +12,6 @@
  */
 class DPIScale
 {
-private:
-    static double scaleX;
-    static double scaleY;
 public:
     static void Initialize(ID2D1Factory *pFactory)
     {
@@ -35,6 +32,9 @@ public:
     {
         return D2D1::Point2F(static_cast<double>(x) * scaleX, static_cast<double>(y) * scaleY);
     }
+private:
+	static double scaleX;
+	static double scaleY;
 };
 
 double DPIScale::scaleX = 1.0f;

@@ -8,7 +8,7 @@ public:
     virtual ~BaseWindow() { }
 public:
     HWND Window() const { return m_hWnd; }
-    BOOL Create
+	virtual BOOL Create
     (
         PCTSTR lpWindowName,
         DWORD dwStyle,
@@ -17,51 +17,20 @@ public:
         int nWidth = CW_USEDEFAULT, int nHeight = CW_USEDEFAULT,
         HWND hWndParent = nullptr,
         HMENU hMenu = nullptr
-    );
+    ) = 0;
 public:
     static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 protected:
     virtual PCTSTR  ClassName() const = 0;
-    virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
+	/*!
+	 *  \brief Handle user-defined commands, some of them are keyboard and mouse actions
+	 *  \note Please refer to https://docs.microsoft.com/zh-cn/windows/win32/learnwin32/mouse-clicks
+	 */
+	virtual LRESULT HandleCommand(WPARAM wParam, LPARAM lParam) = 0;
+	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 protected:
     HWND m_hWnd;
 };
-
-template <class DERIVED_TYPE>
-BOOL BaseWindow<DERIVED_TYPE>::Create
-(
-    PCTSTR lpWindowName,
-    DWORD dwStyle,
-    DWORD dwExStyle,
-    int x, int y,
-    int nWidth, int nHeight,
-    HWND hWndParent,
-    HMENU hMenu
-)
-{
-    WNDCLASS wc = { 0 };
-    wc.style = CS_DBLCLKS;  // Enable to handle double-click event
-    wc.lpfnWndProc = DERIVED_TYPE::WindowProc;
-    wc.hInstance = GetModuleHandle(nullptr);
-    wc.lpszClassName = ClassName();
-    RegisterClass(&wc);
-
-    m_hWnd = CreateWindowEx
-    (
-        dwExStyle,
-        ClassName(),
-        lpWindowName,
-        dwStyle,
-        x, y,
-        nWidth, nHeight,
-        hWndParent,
-        hMenu,
-        GetModuleHandle(nullptr),
-        this
-    );
-
-    return (m_hWnd ? TRUE : FALSE);
-}
 
 template <class DERIVED_TYPE>
 LRESULT BaseWindow<DERIVED_TYPE>::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

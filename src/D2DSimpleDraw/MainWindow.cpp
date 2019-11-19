@@ -3,6 +3,41 @@
 #include "MainWindow.h"
 #include <CommCtrl.h>
 
+BOOL MainWindow::Create
+(
+	PCTSTR lpWindowName,
+	DWORD dwStyle,
+	DWORD dwExStyle,
+	int x, int y,
+	int nWidth, int nHeight,
+	HWND hWndParent,
+	HMENU hMenu
+)
+{
+	WNDCLASS wc = { 0 };
+	wc.style = CS_DBLCLKS;  // Enable to handle double-click event
+	wc.lpfnWndProc = WindowProc;
+	wc.hInstance = GetModuleHandle(nullptr);
+	wc.lpszClassName = ClassName();
+	RegisterClass(&wc);
+
+	m_hWnd = CreateWindowEx
+	(
+		dwExStyle,
+		ClassName(),
+		lpWindowName,
+		dwStyle,
+		x, y,
+		nWidth, nHeight,
+		hWndParent,
+		hMenu,
+		GetModuleHandle(nullptr),
+		this
+	);
+
+	return (m_hWnd ? TRUE : FALSE);
+}
+
 LRESULT MainWindow::HandleCommand(WPARAM wParam, LPARAM lParam)
 {
 	LRESULT hr = S_OK;
@@ -13,14 +48,14 @@ LRESULT MainWindow::HandleCommand(WPARAM wParam, LPARAM lParam)
     case ID_SELECT_MODE:
 		hr = SetMode(wCmd);
 		break;
-    case ID_SWITCH_MODE:
-        hr = SetMode(m_wMode % 3 + ID_DRAG_MODE);
+	case ID_SWITCH_MODE:
+		hr = SetMode(m_wMode % 3 + ID_DRAG_MODE);
 		break;
-    case ID_CONFINE_CURSOR:
-        hr = ConfineCursor();
+	case ID_CONFINE_CURSOR:
+		hr = ConfineCursor();
 		break;
-    }
-    return hr;
+	}
+	return hr;
 }
 
 LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -28,6 +63,7 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch (uMsg)
     {
     case WM_COMMAND:
+		// As for customized commands and messages, it's unnecessary to call DefWindowProc
         return HandleCommand(wParam, lParam);
 
     case WM_CREATE:
@@ -64,19 +100,24 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_MOUSEMOVE:
         OnMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), static_cast<DWORD>(wParam));
-        return S_OK;
+		break;
+
+	case WM_MOUSEHOVER:
+		OnMouseHover(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), static_cast<DWORD>(wParam));
+		break;
 
     case WM_LBUTTONDOWN:
         OnLButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), static_cast<DWORD>(wParam));
-        return S_OK;
+		break;
 
     case WM_LBUTTONUP:
         OnLButtonUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), static_cast<DWORD>(wParam));
-        return S_OK;
+        break;
 
     // For keyboard messages please refer the link below
     // https://docs.microsoft.com/zh-cn/windows/win32/learnwin32/keyboard-input
     // Beware to handle Input Method Editors for WM_IME_CHAR message
+
     }
     return DefWindowProc(m_hWnd, uMsg, wParam, lParam);
 }
@@ -215,6 +256,7 @@ void MainWindow::OnCreate()
 
 void MainWindow::OnDestroy()
 {
+	m_mouseTrack.DisableTrack();
     DiscardGraphicsResources();
     m_pFactory->Release();
     ::PostQuitMessage(EXIT_SUCCESS);
@@ -261,6 +303,8 @@ void MainWindow::OnMouseMove(int pixelX, int pixelY, DWORD flags)
         }        
         ::InvalidateRect(m_hWnd, nullptr, FALSE);
     }
+	else
+		m_mouseTrack.EnableTrack(m_hWnd);
 }
 
 // It will be better to use state machine to switch mode
@@ -299,4 +343,11 @@ void MainWindow::OnLButtonUp(int pixelX, int pixelY, DWORD flags)
     ::ReleaseCapture();
     // Generate WM_PAINT message
     ::InvalidateRect(m_hWnd, nullptr, FALSE);
+}
+
+void MainWindow::OnMouseHover(int pixelX, int pixelY, DWORD flags)
+{
+    // Originally, we'd like to show a tool tip used to show the information for specific ellipse
+	OutputDebugString(_T("Mouse hover!\n"));
+	m_mouseTrack.Reset();
 }
