@@ -1,17 +1,26 @@
 #include "stdafx.h"
 #include "MouseTrackEvents.h"
 
-void MouseTrackEvents::EnableTrack(HWND hWnd)
+void MouseTrackEvents::ShowTips(LPCTSTR text)
+{
+	m_toolTip.ShowText(text);
+}
+
+void MouseTrackEvents::HideTips()
+{
+	m_toolTip.HideText();
+}
+
+void MouseTrackEvents::EnableTrack()
 {
     if (!m_bIsMouseTracking)
     {
-        m_hWnd = hWnd;
-        // Enable mouse tracking.
+        // Enable mouse tracking
         TRACKMOUSEEVENT tme =
         {
             sizeof(TRACKMOUSEEVENT),
             TME_HOVER,
-            hWnd,
+            m_hWnd,
             HOVER_DEFAULT
         };
         ::TrackMouseEvent(&tme);
@@ -21,6 +30,7 @@ void MouseTrackEvents::EnableTrack(HWND hWnd)
 
 void MouseTrackEvents::DisableTrack()
 {
+	// Disable mouse tracking
     TRACKMOUSEEVENT tme =
     {
         sizeof(TRACKMOUSEEVENT),
@@ -30,7 +40,6 @@ void MouseTrackEvents::DisableTrack()
     };
     ::TrackMouseEvent(&tme);
     m_bIsMouseTracking = false;
-    m_hWnd = nullptr;
 }
 
 void MouseTrackEvents::Reset()

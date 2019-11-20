@@ -252,11 +252,13 @@ void MainWindow::OnCreate()
     if (FAILED(::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_pFactory)))
         ::PostQuitMessage(EXIT_FAILURE);
     DPIScale::Initialize(m_pFactory);
+	m_pMouseTrack = new MouseTrackEvents(m_hWnd);
 }
 
 void MainWindow::OnDestroy()
 {
-	m_mouseTrack.DisableTrack();
+	m_pMouseTrack->DisableTrack();
+	delete m_pMouseTrack;
     DiscardGraphicsResources();
     m_pFactory->Release();
     ::PostQuitMessage(EXIT_SUCCESS);
@@ -304,7 +306,43 @@ void MainWindow::OnMouseMove(int pixelX, int pixelY, DWORD flags)
         ::InvalidateRect(m_hWnd, nullptr, FALSE);
     }
 	else
-		m_mouseTrack.EnableTrack(m_hWnd);
+		m_pMouseTrack->EnableTrack();
+}
+
+void MainWindow::OnMouseHover(int pixelX, int pixelY, DWORD flags)
+{
+	// Display the properties for selected ellipse
+	m_pEllipse = m_list.HitTest(pixelX, pixelY);
+	if (m_pEllipse)
+	{
+		if (m_pEllipse == m_pPreviousEllipse)
+		{
+			m_pMouseTrack->Reset();
+			return;
+		}
+		else if (m_pPreviousEllipse)
+			m_pMouseTrack->HideTips();
+
+		TCHAR tips[MAX_PATH] = { };
+		_stprintf_s
+		(
+			tips, _T("Center point: (%.0f, %.0f)\nRadius: (%.0f, %.0f)\nColorValue: %u\n"),
+			m_pEllipse->m_ellipse.point.x,
+			m_pEllipse->m_ellipse.point.y,
+			m_pEllipse->m_ellipse.radiusX,
+			m_pEllipse->m_ellipse.radiusY,
+			m_pEllipse->m_colorValue
+		);
+		OutputDebugString(tips);
+		m_pMouseTrack->ShowTips(tips);
+		m_pPreviousEllipse = m_pEllipse;
+	}
+	else
+	{
+		m_pPreviousEllipse = nullptr;
+		m_pMouseTrack->HideTips();
+	}
+	m_pMouseTrack->Reset();
 }
 
 // It will be better to use state machine to switch mode
@@ -343,11 +381,4 @@ void MainWindow::OnLButtonUp(int pixelX, int pixelY, DWORD flags)
     ::ReleaseCapture();
     // Generate WM_PAINT message
     ::InvalidateRect(m_hWnd, nullptr, FALSE);
-}
-
-void MainWindow::OnMouseHover(int pixelX, int pixelY, DWORD flags)
-{
-    // Originally, we'd like to show a tool tip used to show the information for specific ellipse
-	OutputDebugString(_T("Mouse hover!\n"));
-	m_mouseTrack.Reset();
 }

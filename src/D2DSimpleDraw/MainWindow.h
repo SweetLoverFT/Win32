@@ -23,14 +23,20 @@ private:
     void    OnDestroy();
     void    OnPaint();
     void    OnResize();
+
     /*!
-     *  \brief Handle mouse movement
+     *  \brief Handle mouse movement event
      *  \note Please refer to https://docs.microsoft.com/zh-cn/windows/win32/learnwin32/mouse-movement
      */
     void    OnMouseMove(int pixelX, int pixelY, DWORD flags);
-    void    OnLButtonDown(int pixelX, int pixelY, DWORD flags);
+	/*!
+	 *  \brief Handle mouse hover event
+	 *  \note Please refer to https://docs.microsoft.com/zh-cn/windows/win32/learnwin32/other-mouse-operations
+	 */
+	void    OnMouseHover(int pixelX, int pixelY, DWORD flags);
+
+	void    OnLButtonDown(int pixelX, int pixelY, DWORD flags);
     void    OnLButtonUp(int pixelX, int pixelY, DWORD flags);
-    void    OnMouseHover(int pixelX, int pixelY, DWORD flags);
 public:
     MainWindow()
         : BaseWindow<MainWindow>()
@@ -42,7 +48,9 @@ public:
         , m_hCursor(LoadCursor(nullptr, IDC_ARROW))
         , m_wMode(ID_SELECT_MODE)
         , m_pEllipse(nullptr)
+		, m_pPreviousEllipse(nullptr)
         , m_bIsConfineCursor(false)
+		, m_pMouseTrack(nullptr)
     {
         
     }
@@ -70,7 +78,8 @@ private:
     HCURSOR                 m_hCursor;
     WORD                    m_wMode;
     struct Ellipse          *m_pEllipse;
+	struct Ellipse          *m_pPreviousEllipse;
     EllipseList             m_list;
     bool                    m_bIsConfineCursor;
-    MouseTrackEvents        m_mouseTrack;
+    MouseTrackEvents        *m_pMouseTrack;
 };
