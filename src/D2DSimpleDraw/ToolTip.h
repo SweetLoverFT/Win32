@@ -23,8 +23,8 @@ public:
 			::DestroyWindow(m_hWnd);
 	}
 public:
-	void ShowText(LPCTSTR text);
-	void HideText();
+	virtual void ShowTips(LPCTSTR text) = 0;
+	virtual void HideTips() = 0;
 public:
 	virtual BOOL Create
 	(
@@ -43,10 +43,8 @@ public:
 	{
 		return DefWindowProc(m_hWnd, uMsg, wParam, lParam);
 	};
-private:
+protected:
 	TOOLINFO m_ti;
 	// Very important flag, used to prevent the thread crash
 	bool m_bCanHide;
-private:
-	static const UINT MAX_LENGTH;
 };

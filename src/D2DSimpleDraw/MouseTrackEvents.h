@@ -9,13 +9,14 @@
  * \date Oct the 20th, 2019
  */
 class MouseTrackEvents
+	: public ToolTip
 {
 public:
-	MouseTrackEvents(HWND hWnd) : m_hWnd(hWnd), m_bIsMouseTracking(false)
+	MouseTrackEvents(HWND hWnd) : m_hWndParent(hWnd), m_bIsMouseTracking(false)
 	{
-		m_toolTip.Create
+		Create
 		(
-			m_toolTip.ClassName(),
+			ClassName(),
 			NULL,
 			NULL,
 			CW_USEDEFAULT, CW_USEDEFAULT,
@@ -23,21 +24,21 @@ public:
 			hWnd
 		);
 	}
-	~MouseTrackEvents()
+	virtual ~MouseTrackEvents()
 	{
-		m_toolTip.Destroy();
+		Destroy();
 	}
 public:
 	// These methods will actually call the interface provided by ToolTip class due to aggregation mode
-	void ShowTips(LPCTSTR text);
-	void HideTips();
+	virtual void ShowTips(LPCTSTR text) override;
+	virtual void HideTips() override;
 public:
     void EnableTrack();
     void DisableTrack();
     void Reset();
 private:
-	HWND m_hWnd;
-	// Think in design pattern, will it be better to use inheritance instead of aggregation mode?
-	ToolTip m_toolTip;
+	HWND m_hWndParent;
 	bool m_bIsMouseTracking;
+private:
+	static const UINT MAX_LENGTH;
 };
