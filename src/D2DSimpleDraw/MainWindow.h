@@ -24,6 +24,9 @@ private:
     void    OnPaint();
     void    OnResize();
 
+    HRESULT OnFileOpen();
+    HRESULT OnFileSave();
+
     /*!
      *  \brief Handle mouse movement event
      *  \note Please refer to https://docs.microsoft.com/zh-cn/windows/win32/learnwin32/mouse-movement

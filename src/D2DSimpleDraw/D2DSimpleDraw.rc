@@ -17,6 +17,7 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -51,11 +52,13 @@ END
 
 IDR_ACCEL ACCELERATORS
 BEGIN
+    "L",            ID_CONFINE_CURSOR,      VIRTKEY, CONTROL, NOINVERT
     VK_F1,          ID_DRAG_MODE,           VIRTKEY, NOINVERT
     VK_F2,          ID_DRAW_MODE,           VIRTKEY, NOINVERT
     VK_F3,          ID_SELECT_MODE,         VIRTKEY, NOINVERT
     "M",            ID_SWITCH_MODE,         VIRTKEY, CONTROL, NOINVERT
-    "L",            ID_CONFINE_CURSOR,      VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
 END
 
 #endif    // 中文(简体，中国) resources
