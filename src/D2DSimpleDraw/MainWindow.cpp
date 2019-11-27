@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "DPIScale.h"
+#include "FileDialog.h"
 #include "MainWindow.h"
-#include <CommCtrl.h>
-#include <ShObjIdl.h>
-#include <atlbase.h>        // Contains the declaration of CComPtr
 
 BOOL MainWindow::Create
 (
@@ -57,10 +55,10 @@ LRESULT MainWindow::HandleCommand(WPARAM wParam, LPARAM lParam)
 		hr = ConfineCursor();
 		break;
     case ID_FILE_OPEN:
-        hr = OnFileOpen();
+        OnFileOpen();
         break;
     case ID_FILE_SAVE:
-        hr = OnFileSave();
+        OnFileSave();
         break;
 	}
 	return hr;
@@ -293,131 +291,20 @@ void MainWindow::OnResize()
     }
 }
 
-HRESULT MainWindow::OnFileOpen()
+void MainWindow::OnFileOpen()
 {
-    HRESULT hr = ::CoInitializeEx
-    (
-        nullptr,
-        // A thread that creates a window should use the COINIT_APARTMENTTHREADED
-        COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE
-    );
-    if (SUCCEEDED(hr))
-    {
-        CComPtr<IFileOpenDialog> pFileOpen;
-        hr = pFileOpen.CoCreateInstance(__uuidof(FileOpenDialog));
-        if (SUCCEEDED(hr))
-        {
-            DWORD dwFlags;
-            hr = pFileOpen->GetOptions(&dwFlags);
-            if (SUCCEEDED(hr))
-            {
-                hr = pFileOpen->SetOptions(dwFlags | FOS_FORCEFILESYSTEM);
-                if (SUCCEEDED(hr))
-                {
-                    // Supported file types
-                    const COMDLG_FILTERSPEC rgOpenTypes[] =
-                    {
-                        { L"24-bit bitmaps (*.bmp)", L"*.bmp" }
-                    };
-                    hr = pFileOpen->SetFileTypes(ARRAYSIZE(rgOpenTypes), rgOpenTypes);
-                    if (SUCCEEDED(hr))
-                    {
-                        hr = pFileOpen->SetFileTypeIndex(0);
-                        if (SUCCEEDED(hr))
-                            hr = pFileOpen->SetDefaultExtension(L"bmp");
-                    }
-                }
-            }
-
-            hr = pFileOpen->Show(nullptr);
-            if (SUCCEEDED(hr))
-            {
-                // ::CoTaskMemAlloc happened inside IFileDialog::GetResult
-                CComPtr<IShellItem> pItem;
-                hr = pFileOpen->GetResult(&pItem);
-                if (SUCCEEDED(hr))
-                {
-                    // Get the file name from the dialog box
-                    LPWSTR lpszFilePath = nullptr;
-                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &lpszFilePath);
-
-                    if (SUCCEEDED(hr))
-                    {
-                        // Display the file name to the user
-                        ::MessageBeep(MB_OK);
-                        MessageBox(nullptr, lpszFilePath, _T("File path"), MB_OK | MB_ICONINFORMATION);
-                        ::CoTaskMemFree(lpszFilePath);
-                    }
-                }
-            }
-        }
-        ::CoUninitialize();
-    }
-
-    return hr;
+    FileDialog dlg(true, _T("bmp"), nullptr, _T("24-bit bitmaps (*.bmp)"), _T("*.bmp"), m_hWnd);
+    LPCTSTR lpszFilePath = dlg.GetFilePath();
+    if (lpszFilePath)
+        MessageBox(m_hWnd, lpszFilePath, _T("Full file path"), MB_OK | MB_ICONINFORMATION);
 }
 
-HRESULT MainWindow::OnFileSave()
+void MainWindow::OnFileSave()
 {
-    HRESULT hr = ::CoInitializeEx
-    (
-        nullptr,
-        // A thread that creates a window should use the COINIT_APARTMENTTHREADED
-        COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE
-    );
-    if (SUCCEEDED(hr))
-    {
-        CComPtr<IFileSaveDialog> pFileSave;
-        hr = pFileSave.CoCreateInstance(__uuidof(FileSaveDialog));
-        if (SUCCEEDED(hr))
-        {
-            // Supported file types
-            const COMDLG_FILTERSPEC rgSaveTypes[] =
-            {
-                { L"24-bit bitmaps (*.bmp)", L"*.bmp" }
-            };
-            hr = pFileSave->SetFileTypes(ARRAYSIZE(rgSaveTypes), rgSaveTypes);
-            if (SUCCEEDED(hr))
-            {
-                hr = pFileSave->SetFileTypeIndex(0);
-                if (SUCCEEDED(hr))
-                {
-                    hr = pFileSave->SetDefaultExtension(_T("bmp"));
-                    if (SUCCEEDED(hr))
-                    {
-                        DWORD dwFlags;
-                        hr = pFileSave->GetOptions(&dwFlags);
-                        if (SUCCEEDED(hr))
-                            hr = pFileSave->SetOptions(dwFlags | FOS_FORCEFILESYSTEM);
-                    }
-                }
-            }
-        }
-
-        hr = pFileSave->Show(nullptr);
-        if (SUCCEEDED(hr))
-        {
-            // ::CoTaskMemAlloc happened inside IFileDialog::GetResult
-            CComPtr<IShellItem> pItem;
-            hr = pFileSave->GetResult(&pItem);
-            if (SUCCEEDED(hr))
-            {
-                // Get the file name from the dialog box
-                LPWSTR lpszFilePath = nullptr;
-                hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &lpszFilePath);
-                if (SUCCEEDED(hr))
-                {
-                    // Display the file name to the user
-                    ::MessageBeep(MB_OK);
-                    MessageBox(nullptr, lpszFilePath, _T("File path"), MB_OK | MB_ICONINFORMATION);
-                    ::CoTaskMemFree(lpszFilePath);
-                }
-            }
-        }
-        ::CoUninitialize();
-    }
-
-    return hr;
+    FileDialog dlg(false, _T("bmp"), nullptr, _T("24-bit bitmaps (*.bmp)"), _T("*.bmp"), m_hWnd);
+    LPCTSTR lpszFilePath = dlg.GetFilePath();
+    if (lpszFilePath)
+        MessageBox(m_hWnd, lpszFilePath, _T("Full file path"), MB_OK | MB_ICONINFORMATION);
 }
 
 void MainWindow::OnMouseMove(int pixelX, int pixelY, DWORD flags)

@@ -24,8 +24,8 @@ private:
     void    OnPaint();
     void    OnResize();
 
-    HRESULT OnFileOpen();
-    HRESULT OnFileSave();
+    void    OnFileOpen();
+    void    OnFileSave();
 
     /*!
      *  \brief Handle mouse movement event

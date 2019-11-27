@@ -44,12 +44,12 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
             if (SUCCEEDED(hr))
             {
                 // IShellItem *pItem = nullptr;
-                // ::CoTaskMemAlloc happened inside IFileDialog::GetResult
                 CComPtr<IShellItem> pItem;
                 hr = pFileOpen->GetResult(&pItem);
                 if (SUCCEEDED(hr))
                 {
                     // Get the file name from the dialog box
+                    // ::CoTaskMemAlloc happened inside IFileDialog::GetDisplayName
                     LPWSTR lpszFilePath = nullptr;
                     hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &lpszFilePath);
 
