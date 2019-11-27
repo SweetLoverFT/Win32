@@ -15,6 +15,9 @@ public:
     ~FileDialog();
 public:
     LPCTSTR GetFilePath() const;
+    void OpenBitmap(HWND hWnd);
+    // Please refer to https://blog.csdn.net/bagboy_taobao_com/article/details/8723510
+    void SaveBitmap(HWND hWnd);
 private:
     bool m_bValid;
     HRESULT m_hr;

@@ -135,7 +135,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         ptr = GetWindowLongPtr(hwnd, GWLP_USERDATA);
         pLicense = reinterpret_cast<char*>(ptr);
         ::OutputDebugStringA(pLicense);
-        // ::MoveWindow, ::SetWindowPos        
+        /*
+         * MoveWindow sends WM_WINDOWPOSCHANGED, WM_MOVE, WM_SIZE, and WM_NCCALCSIZE messages
+         * to the window while SetWindowPos always causes a WM_WINDOWPOSCHANGED message to be
+         * sent to the window. The flags passed in this message are exactly the same as those
+         * passed into the function. No other messages are sent by this function.
+         */
         break;
 
     case WM_SIZE:

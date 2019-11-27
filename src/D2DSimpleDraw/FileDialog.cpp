@@ -125,3 +125,132 @@ LPCTSTR FileDialog::GetFilePath() const
 
     return nullptr;
 }
+
+void FileDialog::OpenBitmap(HWND hWnd)
+{
+    HANDLE hFile = CreateFile
+    (
+        m_szFilePath,
+        GENERIC_READ,
+        NULL,
+        nullptr,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL,
+        nullptr
+    );
+    if (INVALID_HANDLE_VALUE != hFile)
+    {
+        DWORD dwCount = 0;
+        BITMAPFILEHEADER bfh = { };
+        BITMAPINFOHEADER bih = { };
+        if (FALSE != ::ReadFile(hFile, &bfh, sizeof(BITMAPFILEHEADER), &dwCount, nullptr)
+            && FALSE != ::ReadFile(hFile, &bih, sizeof(BITMAPINFOHEADER), &dwCount, nullptr))
+        {
+            LPBYTE pData = new BYTE[bih.biSizeImage];
+            if (pData)
+            {
+                if (FALSE != ::ReadFile(hFile, pData, bih.biSizeImage, &dwCount, nullptr))
+                {
+                    HBITMAP hBitmap = ::CreateBitmap
+                    (
+                        bih.biWidth,
+                        bih.biHeight,
+                        bih.biPlanes,
+                        bih.biBitCount,
+                        pData
+                    );
+                    if (hBitmap)
+                    {
+                        HDC hDC = ::GetDC(hWnd);
+                        if (hDC)
+                        {
+                            HDC hMemDC = ::CreateCompatibleDC(hDC);
+                            if (hMemDC)
+                            {
+                                HBITMAP hOldBitmap = reinterpret_cast<HBITMAP>(::SelectObject(hMemDC, hBitmap));
+                                BOOL bRet = ::BitBlt(hDC, 0, 0, bih.biWidth, bih.biHeight, hMemDC, 0, 0, SRCCOPY);
+                                if (hOldBitmap)
+                                    hBitmap = reinterpret_cast<HBITMAP>(::SelectObject(hMemDC, hOldBitmap));
+                                bRet = ::DeleteDC(hMemDC);
+                            }
+                            int ret = ::ReleaseDC(hWnd, hDC);
+                        }
+                        BOOL bRet = ::DeleteObject(hBitmap);
+                    }
+                }
+                delete[] pData;
+            }
+        }
+        ::CloseHandle(hFile);
+    }
+}
+
+void FileDialog::SaveBitmap(HWND hWnd)
+{
+    HDC hDC = ::GetDC(hWnd);
+    if (hDC)
+    {
+        HBITMAP hBitmap = reinterpret_cast<HBITMAP>(::GetCurrentObject(hDC, OBJ_BITMAP));
+        if (hBitmap)
+        {
+            BITMAP bitmap = { };
+            if (NULL != GetObject(hBitmap, sizeof(BITMAP), &bitmap))
+            {
+                BITMAPINFOHEADER bih = { };
+                bih.biSize = sizeof(BITMAPINFOHEADER);
+                bih.biBitCount = bitmap.bmBitsPixel;
+                bih.biCompression = BI_RGB;
+                bih.biPlanes = bitmap.bmPlanes;
+                bih.biWidth = bitmap.bmWidth;
+                bih.biHeight = bitmap.bmHeight;
+                // In the past, the width per line was aligned on 4 bytes
+                // because of SIMD hardware acceleration by CPU for game engine
+                bih.biSizeImage = (((bih.biWidth * bih.biBitCount >> 3) + 3) >> 2 << 2) * bih.biHeight;
+
+                LPBYTE pData = new BYTE[bih.biSizeImage];
+                if (pData)
+                {
+                    if (NULL != ::GetBitmapBits(hBitmap, bih.biSizeImage, pData))
+                    {
+                        BITMAPFILEHEADER bfh = { };
+                        bfh.bfType = 0x4D42;
+                        bfh.bfSize = bih.biSizeImage + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+                        bfh.bfReserved1 = 0;
+                        bfh.bfReserved2 = 0;
+                        bfh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+
+                        HANDLE hFile = CreateFile
+                        (
+                            m_szFilePath,
+                            GENERIC_WRITE,
+                            NULL,
+                            nullptr,
+                            CREATE_ALWAYS,
+                            FILE_ATTRIBUTE_NORMAL,
+                            nullptr
+                        );
+                        if (INVALID_HANDLE_VALUE != hFile)
+                        {
+                            DWORD dwCount = 0;
+                            if (FALSE != ::WriteFile(hFile, &bfh, sizeof(BITMAPFILEHEADER), &dwCount, nullptr)
+                                && FALSE != ::WriteFile(hFile, &bih, sizeof(BITMAPINFOHEADER), &dwCount, nullptr)
+                                && FALSE != ::WriteFile(hFile, pData, bih.biSizeImage, &dwCount, nullptr)
+                                && FALSE != ::CloseHandle(hFile))
+                            {
+                                int nAnswer = MessageBox
+                                (
+                                    hWnd,
+                                    _T("Successfully saved!"),
+                                    _T("Save as"),
+                                    MB_OK | MB_ICONINFORMATION
+                                );
+                            }
+                        }
+                    }
+                    delete[] pData;
+                }
+            }
+        }
+        int ret = ::ReleaseDC(hWnd, hDC);
+    }
+}

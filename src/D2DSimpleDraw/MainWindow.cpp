@@ -296,7 +296,7 @@ void MainWindow::OnFileOpen()
     FileDialog dlg(true, _T("bmp"), nullptr, _T("24-bit bitmaps (*.bmp)"), _T("*.bmp"), m_hWnd);
     LPCTSTR lpszFilePath = dlg.GetFilePath();
     if (lpszFilePath)
-        MessageBox(m_hWnd, lpszFilePath, _T("Full file path"), MB_OK | MB_ICONINFORMATION);
+        dlg.OpenBitmap(m_hWnd);
 }
 
 void MainWindow::OnFileSave()
@@ -304,7 +304,7 @@ void MainWindow::OnFileSave()
     FileDialog dlg(false, _T("bmp"), nullptr, _T("24-bit bitmaps (*.bmp)"), _T("*.bmp"), m_hWnd);
     LPCTSTR lpszFilePath = dlg.GetFilePath();
     if (lpszFilePath)
-        MessageBox(m_hWnd, lpszFilePath, _T("Full file path"), MB_OK | MB_ICONINFORMATION);
+        dlg.SaveBitmap(m_hWnd);
 }
 
 void MainWindow::OnMouseMove(int pixelX, int pixelY, DWORD flags)
