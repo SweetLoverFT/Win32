@@ -8,7 +8,7 @@ Introduce the new language features, we use Microsoft compiler **"cl.exe"** to c
 ## C++ 11 Features list
 
 1. **Rvalue references**: Used to improve the performance of the program by unnecessary duplication
-2. **ref-qualifiers**: 
+2. **ref-qualifiers**: Used for member functions in a class for L-value & R-value callers
 3. **Non-static data member initializers**: 
 4. **Variadic templates**: 
 5. **Initializer lists**: 
