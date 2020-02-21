@@ -39,6 +39,9 @@
     <ClCompile Include="02. ref-qualifier.cpp">
       <Filter>示例</Filter>
     </ClCompile>
+    <ClCompile Include="03. Non-static data member initializers.cpp">
+      <Filter>示例</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -48,6 +51,9 @@
       <Filter>示例</Filter>
     </ClInclude>
     <ClInclude Include="02. ref-qualifier.h">
+      <Filter>示例</Filter>
+    </ClInclude>
+    <ClInclude Include="03. Non-static data member initializers.h">
       <Filter>示例</Filter>
     </ClInclude>
   </ItemGroup>
