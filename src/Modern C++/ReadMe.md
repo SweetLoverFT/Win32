@@ -10,7 +10,7 @@ Introduce the new language features, we use Microsoft compiler **"cl.exe"** to c
 1. **Rvalue references**: Used to improve the performance of the program by unnecessary duplication
 2. **ref-qualifiers**: Used for member functions in a class for L-value & R-value callers
 3. **Non-static data member initializers**: Used to initialize the member objects **before** constructors, please use **<code>{}</code>** operator
-4. **Variadic templates**: 
+4. **Variadic templates**: Used for overloaded functions with uncertain number and types of parameters
 5. **Initializer lists**: 
 6. **<code>static_assert</code>**: 
 7. **<code>auto</code>**: 
