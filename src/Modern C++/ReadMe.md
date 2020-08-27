@@ -11,7 +11,7 @@ Introduce the new language features, we use Microsoft compiler **"cl.exe"** to c
 2. **ref-qualifiers**: Used for member functions in a class for L-value & R-value callers
 3. **Non-static data member initializers**: Used to initialize the member objects **before** constructors, please use **<code>{}</code>** operator
 4. **Variadic templates**: Used for overloaded functions with uncertain number and types of parameters
-5. **Initializer lists**: 
+5. **Initializer lists**: Basically used as a lightweight proxy object that provides access to an array of objects of type const T, please pay attention to the one-argument constructor without keyword **<code>explicit</code>**
 6. **<code>static_assert</code>**: 
 7. **<code>auto</code>**: 
 8. **Trailing return types**: 

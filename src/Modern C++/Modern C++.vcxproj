@@ -143,6 +143,7 @@
     <ClCompile Include="02. ref-qualifier.cpp" />
     <ClCompile Include="03. Non-static data member initializers.cpp" />
     <ClCompile Include="04. Variadic templates.cpp" />
+    <ClCompile Include="05. Initializer lists.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -156,6 +157,7 @@
     <ClInclude Include="02. ref-qualifier.h" />
     <ClInclude Include="03. Non-static data member initializers.h" />
     <ClInclude Include="04. Variadic templates.h" />
+    <ClInclude Include="05. Initializer lists.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
