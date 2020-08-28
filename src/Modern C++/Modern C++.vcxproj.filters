@@ -48,6 +48,9 @@
     <ClCompile Include="05. Initializer lists.cpp">
       <Filter>示例</Filter>
     </ClCompile>
+    <ClCompile Include="06. static_assert.cpp">
+      <Filter>示例</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -66,6 +69,9 @@
       <Filter>示例</Filter>
     </ClInclude>
     <ClInclude Include="05. Initializer lists.h">
+      <Filter>示例</Filter>
+    </ClInclude>
+    <ClInclude Include="06. static_assert.h">
       <Filter>示例</Filter>
     </ClInclude>
   </ItemGroup>

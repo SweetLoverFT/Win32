@@ -12,6 +12,7 @@ int main()
 	TEST_CASE(Case03);
 	TEST_CASE(Case04);
     TEST_CASE(Case05);
+    TEST_CASE(Case06);
 
 	return EXIT_SUCCESS;
 }
