@@ -145,6 +145,7 @@
     <ClCompile Include="04. Variadic templates.cpp" />
     <ClCompile Include="05. Initializer lists.cpp" />
     <ClCompile Include="06. static_assert.cpp" />
+    <ClCompile Include="07. auto.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -160,6 +161,7 @@
     <ClInclude Include="04. Variadic templates.h" />
     <ClInclude Include="05. Initializer lists.h" />
     <ClInclude Include="06. static_assert.h" />
+    <ClInclude Include="07. auto.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -51,6 +51,9 @@
     <ClCompile Include="06. static_assert.cpp">
       <Filter>示例</Filter>
     </ClCompile>
+    <ClCompile Include="07. auto.cpp">
+      <Filter>示例</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -72,6 +75,9 @@
       <Filter>示例</Filter>
     </ClInclude>
     <ClInclude Include="06. static_assert.h">
+      <Filter>示例</Filter>
+    </ClInclude>
+    <ClInclude Include="07. auto.h">
       <Filter>示例</Filter>
     </ClInclude>
   </ItemGroup>
